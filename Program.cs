@@ -1,26 +1,27 @@
+using ChatRoomDemo.Hubs;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorPages();
+// 1. Add services
+builder.Services.AddRazorPages(); // or AddControllersWithViews()
+builder.Services.AddSignalR();    // <-- Add SignalR
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 2. Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    // app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-
+app.UseStaticFiles();  // needed if you host JS files
 app.UseRouting();
 
-app.UseAuthorization();
+// 3. Map your Razor pages or controllers
+app.MapRazorPages(); // or app.MapControllerRoute()
 
-app.MapStaticAssets();
-app.MapRazorPages()
-   .WithStaticAssets();
+// 4. Map your Hub
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
